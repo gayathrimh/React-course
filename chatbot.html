@@ -2,6 +2,27 @@
 <html>
   <head>
     <title>Chatbot</title>
+    <style>
+      .send-button{
+        background-color: rgb(25, 135, 84);;
+        color:white;
+        padding:12px 20px;
+        margin-left:10px;
+        border:none;
+        border-radius:10px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      .chat-input{
+        padding:12px 15px;
+        border-radius:10px;
+        border-width: 1px;
+        font-size: 15px;
+        
+      }
+      
+    </style>
   </head>
   <body>
     <div class="js-container"></div>
@@ -9,18 +30,56 @@
     <script src="https://unpkg.com/supersimpledev/react.js"></script> 
     <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
 
+    <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
+
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
     <script type="text/babel"> // this is babel library as it says to translate to normal js
 
-    function ChatInput(){
+    function ChatInput({chatMessages,setChatMessages}){
+      const [inputText,setInputText]=React.useState('');
+      function saveInputText(event){
+        setInputText(event.target.value);
+      }
+
+      function sendMessage(){
+        const newChatMessages=[
+          
+        ...chatMessages,
+        {
+          message:inputText,
+          sender:'user',
+          id:crypto.randomUUID()
+        }
+       ];
+        
+         setChatMessages(newChatMessages);
+
+       const response=Chatbot.getResponse(inputText);
+        setChatMessages([
+        ...newChatMessages,
+        {
+          message:response,
+          sender:'robot',
+          id:crypto.randomUUID()
+        }
+       ]);
+       setInputText('')
+      }
+
       return (
-        <>
+        <div className="chat-input-container">
         <input
            placeholder="Send message to chatbot"
            size="30"
+           onChange={saveInputText}                //change function its prop
+           value={inputText}
+           className="chat-input"
         />
-        <button>Send</button>
-      </>
+        <button
+        onClick={sendMessage}
+        className="send-button"
+        >Send</button>
+      </div>
       );
     }
 
@@ -52,26 +111,53 @@
       );
     }
 
+    function ChatMessages({chatMessages}){
+      return(
+        <>
+      {chatMessages.map((chatMessage)=>{
+                return(
+                  <ChatMessage
+                  message={chatMessage.message}
+                  sender={chatMessage.sender}
+                  key={chatMessage.id}
+               />
+            );
+          })}
+        </>
+      );
+    }
+
     function App(){
+
+            const [chatMessages,setChatMessages]=React.useState([{
+        message:'hello chatbot',
+        sender:'user',
+        id:'id1'
+      },{
+        message:'Hello! How can I help you?',
+        sender:'robot',
+        id:'id2'
+      },{
+        message:'can you get me todays date', 
+        sender:'user',
+        id:'id3'
+      },{
+        message:'Today is December 26',
+        sender:'robot',
+        id:'id4'
+      }]);
+     // const [chatMessages,setChatMessages]=array; 
+    //  const chatMessages=array[0];            ->shortcut for below ,array destructing
+      //const setChatMessages=array[1];
       return(
           <>                             
-              <ChatInput />
-              <ChatMessage
-                message="hello chatbot"
-                sender="user"
-                />    
-              <ChatMessage
-                message="Hello! How can I help you?"
-                sender="robot"
-                />
-              <ChatMessage
-                message="can you get me todays date"
-                sender="user"
-                />
-              <ChatMessage
-                message="Today is December 26"
-                sender="robot"
-                />
+              <ChatInput
+              chatMessages={chatMessages}
+              setChatMessages={setChatMessages}
+              />
+              <ChatMessages
+              chatMessages={chatMessages}
+              />  
         </>
       );
     }
