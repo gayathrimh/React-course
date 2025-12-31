@@ -4,17 +4,24 @@ import {Header} from '../components/Header';
 import './HomePage.css';
 
 export function HomePage(){
-  const[products,setProducts]=useState([]);                  //setProducts->updater function
+  const[products,setProducts]=useState([]);  
+  const[cart,setCart]=useState([]);
+                  //setProducts->updater function
   useEffect(()=>{
       axios.get('http://localhost:3000/api/products')
       .then((response)=>{
       setProducts(response.data);
         });
+
+        axios.get('http://localhost:3000/api/cart-items')
+        .then((response)=>{
+          setCart(response.data);
+        });
   },[]);
   
     return(
         <> 
-        <Header />  
+        <Header  cart={cart}/>  
          <title>Ecommerce Project</title>
 
           <div className="home-page">
