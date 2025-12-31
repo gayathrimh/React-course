@@ -17,17 +17,14 @@ export function Product({product,loadCart}){
     const selectQuantity=(event)=>{
       
          const quantitySelected=Number(event.target.value);
-        setQuantity(quantitySelected);
-                      
+        setQuantity(quantitySelected);             
         }
-    }
-
-
+    
     return(
            <div className="product-container">
                   <div className="product-image-container">
                     <img className="product-image"
-                      src={product.image} />
+                      src={product.image} />    
                   </div>
         
                   <div className="product-name limit-text-to-2-lines">
